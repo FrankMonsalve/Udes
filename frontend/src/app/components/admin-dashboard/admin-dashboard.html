@@ -1,0 +1,223 @@
+<div class="card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div>
+      <h3 class="mb-0">Gestión de Aspirantes</h3>
+      <span class="text-muted small">Rol: <strong>{{rol}}</strong></span>
+    </div>
+    <button class="btn btn-outline-danger" (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesion
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Documento</th>
+          <th>Nombre Completo</th>
+          <th>Estado de Inscripción</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of aspirantes; track a.id) {
+          <tr>
+            <td>{{a.numero_documento}}</td>
+            <td>{{a.nombre_completo}}</td>
+            <td>
+              <span class="badge rounded-pill" 
+                [class.bg-secondary]="a.estado === 'PRE-INSCRIPCION'"
+                [class.bg-primary]="a.estado === 'DILIGENCIANDO FORMULARIO'"
+                [class.bg-warning]="a.estado === 'FINALIZO INSCRIPCION'"
+                [class.bg-info]="a.estado === 'APROBADO'"
+                [class.bg-success]="a.estado === 'ADMITIDO'"
+                [class.bg-danger]="a.estado === 'RECHAZADO'">
+                {{a.estado}}
+              </span>
+            </td>
+            <td class="text-center">
+              @switch (rol) {
+                @case ('RYC') {
+                  <button class="btn btn-sm btn-primary" (click)="aprobarRegistro(a.id)" [disabled]="a.estado !== 'FINALIZO INSCRIPCION'">
+                    <i class="bi bi-shield-check me-1"></i> Validar
+                  </button>
+                }
+                @case ('MEI') {
+                  <button class="btn btn-sm btn-info text-white" (click)="iniciarEdicion(a)">
+                    <i class="bi bi-pencil-square me-1"></i> Editar
+                  </button>
+                }
+                @case ('CPG') {
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-success" (click)="admitirAspirante(a.id)" [disabled]="a.estado !== 'APROBADO'">
+                      <i class="bi bi-person-check me-1"></i> Admitir
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="rechazarAspirante(a.id)" [disabled]="a.estado !== 'APROBADO'">
+                      <i class="bi bi-person-x me-1"></i> Rechazar
+                    </button>
+                  </div>
+                }
+              }
+              <button class="btn btn-sm btn-outline-secondary ms-1" (click)="verDetalles(a)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="text-center py-4 text-muted">
+              No hay aspirantes registrados actualmente.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal/Formulario de Edición MEI -->
+  @if (editandoAspirante) {
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Información de Aspirante</h5>
+            <button type="button" class="btn-close" (click)="cancelarEdicion()"></button>
+          </div>
+          <div class="modal-body">
+            <form #meiForm="ngForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nombres</label>
+                  <input type="text" class="form-control" name="nombres" [(ngModel)]="editandoAspirante.nombres" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Apellidos</label>
+                  <input type="text" class="form-control" name="apellidos" [(ngModel)]="editandoAspirante.apellidos" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Correo</label>
+                  <input type="email" class="form-control" name="correo" [(ngModel)]="editandoAspirante.correo" required #correo="ngModel">
+                  <div *ngIf="correo.invalid && (correo.dirty || correo.touched)" class="text-danger small">Correo requerido</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Celular</label>
+                  <input type="text" class="form-control" name="celular" [(ngModel)]="editandoAspirante.celular" #celular="ngModel">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Programa</label>
+                  <select class="form-select" name="programa_id" [(ngModel)]="editandoAspirante.programa_id" required>
+                    <option [ngValue]="null" disabled>Seleccione un programa...</option>
+                    @for (p of programas; track p.id) {
+                      <option [value]="p.id">{{p.nombre}}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Estrato</label>
+                  <input type="number" class="form-control" name="estrato" [(ngModel)]="editandoAspirante.estrato">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Fecha Nacimiento</label>
+                  <input type="date" class="form-control" name="fecha_nacimiento" [(ngModel)]="editandoAspirante.fecha_nacimiento">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Lugar Nacimiento</label>
+                  <input type="text" class="form-control" name="lugar_nacimiento" [(ngModel)]="editandoAspirante.lugar_nacimiento">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Dirección Residencia</label>
+                  <input type="text" class="form-control" name="direccion_residencia" [(ngModel)]="editandoAspirante.direccion_residencia">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Motivación (Encuesta)</label>
+                  <textarea class="form-control" name="motivacion" [(ngModel)]="editandoAspirante.motivacion"></textarea>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="guardarCambiosMEI()">Guardar y Finalizar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Visualización (Read-only) -->
+  @if (aspiranteSeleccionado) {
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-light">
+            <h5 class="modal-title">Detalles del Aspirante</h5>
+            <button type="button" class="btn-close" (click)="cerrarDetalles()"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="fw-bold">Nombres:</label>
+                <p>{{aspiranteSeleccionado.nombres}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Apellidos:</label>
+                <p>{{aspiranteSeleccionado.apellidos}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Correo:</label>
+                <p>{{aspiranteSeleccionado.correo}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Celular:</label>
+                <p>{{aspiranteSeleccionado.celular}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Documento:</label>
+                <p>{{aspiranteSeleccionado.tipo_documento}} {{aspiranteSeleccionado.numero_documento}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Programa:</label>
+                <p>{{aspiranteSeleccionado.programa_nombre}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Estado:</label>
+                <p><span class="badge bg-info text-dark">{{aspiranteSeleccionado.estado}}</span></p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Estrato:</label>
+                <p>{{aspiranteSeleccionado.estrato}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Fecha de Nacimiento:</label>
+                <p>{{aspiranteSeleccionado.fecha_nacimiento}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Lugar de Nacimiento:</label>
+                <p>{{aspiranteSeleccionado.lugar_nacimiento}}</p>
+              </div>
+              <div class="col-12">
+                <label class="fw-bold">Dirección de Residencia:</label>
+                <p>{{aspiranteSeleccionado.direccion_residencia}}</p>
+              </div>
+              <div class="col-12">
+                <label class="fw-bold">Motivación:</label>
+                <p class="text-muted small">{{aspiranteSeleccionado.motivacion}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Medio Enterado:</label>
+                <p>{{aspiranteSeleccionado.medio_enterado}}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold">Canal Informativo:</label>
+                <p>{{aspiranteSeleccionado.canal_informativo}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarDetalles()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

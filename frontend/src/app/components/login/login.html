@@ -1,0 +1,27 @@
+<div class="card p-4 mx-auto" style="max-width: 400px; margin-top: 50px;">
+  <h3 class="mb-4 text-center">Ingreso al Sistema</h3>
+  
+  <form (ngSubmit)="iniciarSesion()">
+    <div class="mb-3">
+      <label class="form-label">Número de Documento (Usuario)</label>
+      <input type="text" class="form-control" [(ngModel)]="credenciales.username" name="username" placeholder="Ingrese su documento" required>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" class="form-control" [(ngModel)]="credenciales.password" name="password" placeholder="Contraseña asignada" required>
+      <div class="form-text mt-1 text-muted">
+        Si es su primer ingreso, use su número de documento.
+      </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary w-100 mt-2">Acceder</button>
+  </form>
+  
+  <hr class="my-4">
+  
+  <div class="text-center">
+    <p class="mb-1">¿Aún no se ha pre-inscrito?</p>
+    <a routerLink="/pre-registration" class="link-primary">Realizar pre-inscripción aquí</a>
+  </div>
+</div>

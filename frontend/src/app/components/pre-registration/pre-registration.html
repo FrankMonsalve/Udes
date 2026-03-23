@@ -1,0 +1,89 @@
+<div class="card p-4 mx-auto" style="max-width: 600px;">
+  <h3 class="mb-4">Pre-inscripción de Aspirantes</h3>
+  <form #preRegForm="ngForm" (ngSubmit)="preRegForm.valid && enviarFormulario()">
+    <div class="mb-3">
+      <label class="form-label">Tipo de Documento</label>
+      <select class="form-select" [(ngModel)]="datosFormulario.tipo_documento" name="tipo_documento" required #tipoDoc="ngModel" [class.is-invalid]="tipoDoc.invalid && (tipoDoc.dirty || tipoDoc.touched || preRegForm.submitted)">
+        <option value="" disabled selected>Seleccione...</option>
+        <option value="CC">Cédula de Ciudadanía</option>
+        <option value="TI">Tarjeta de Identidad</option>
+        <option value="CE">Cédula de Extranjería</option>
+        <option value="PA">Pasaporte</option>
+      </select>
+      <div class="invalid-feedback">El tipo de documento es requerido</div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Número de Documento</label>
+      <input type="text" class="form-control" [(ngModel)]="datosFormulario.numero_documento" name="numero_documento" placeholder="Ej: 123456789" required #numDoc="ngModel" [class.is-invalid]="numDoc.invalid && (numDoc.dirty || numDoc.touched || preRegForm.submitted)">
+      <div class="invalid-feedback">El número de documento es requerido</div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Nombres</label>
+        <input type="text" class="form-control" [(ngModel)]="datosFormulario.nombres" name="nombres" placeholder="Sus nombres" required #nombres="ngModel" [class.is-invalid]="nombres.invalid && (nombres.dirty || nombres.touched || preRegForm.submitted)">
+        <div class="invalid-feedback">Los nombres son requeridos</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Apellidos</label>
+        <input type="text" class="form-control" [(ngModel)]="datosFormulario.apellidos" name="apellidos" placeholder="Sus apellidos" required #apellidos="ngModel" [class.is-invalid]="apellidos.invalid && (apellidos.dirty || apellidos.touched || preRegForm.submitted)">
+        <div class="invalid-feedback">Los apellidos son requeridos</div>
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Género</label>
+      <select class="form-select" [(ngModel)]="datosFormulario.genero" name="genero" required #genero="ngModel" [class.is-invalid]="genero.invalid && (genero.dirty || genero.touched || preRegForm.submitted)">
+        <option value="" disabled selected>Seleccione...</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Femenino">Femenino</option>
+        <option value="Otro">Otro</option>
+      </select>
+      <div class="invalid-feedback">El género es requerido</div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Correo Electrónico</label>
+      <input type="email" class="form-control" [(ngModel)]="datosFormulario.correo" name="correo" placeholder="ejemplo@correo.com" required email #correo="ngModel" [class.is-invalid]="correo.invalid && (correo.dirty || correo.touched || preRegForm.submitted)">
+      <div class="invalid-feedback" *ngIf="correo.errors?.['required']">El correo es requerido</div>
+      <div class="invalid-feedback" *ngIf="correo.errors?.['email']">Ingrese un correo válido</div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Celular</label>
+      <input type="text" class="form-control" [(ngModel)]="datosFormulario.celular" name="celular" placeholder="Ej: 3001234567" required #celular="ngModel" [class.is-invalid]="celular.invalid && (celular.dirty || celular.touched || preRegForm.submitted)">
+      <div class="invalid-feedback">El celular es requerido</div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Programa al que aspira</label>
+      <select class="form-select" [(ngModel)]="datosFormulario.programa_id" name="programa_id" required #prog="ngModel" [class.is-invalid]="prog.invalid && (prog.dirty || prog.touched || preRegForm.submitted)">
+        <option value="" disabled selected>Seleccione un programa...</option>
+        @for (p of programas; track p.id) {
+          <option [value]="p.id">{{p.nombre}}</option>
+        }
+      </select>
+      <div class="invalid-feedback">Seleccione un programa académico</div>
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Tipo de Aspirante</label>
+      <select class="form-select" [(ngModel)]="datosFormulario.tipo_aspirante" name="tipo_aspirante" required #tipoAsp="ngModel" [class.is-invalid]="tipoAsp.invalid && (tipoAsp.dirty || tipoAsp.touched || preRegForm.submitted)">
+        <option value="" disabled selected>Seleccione...</option>
+        <option value="Nuevo Nacional">Nuevo Nacional</option>
+        <option value="Nuevo Internacional">Nuevo Internacional</option>
+        <option value="Transferencia Interna">Transferencia Interna (entre programas)</option>
+        <option value="Transferencia Externa">Transferencia Externa (otras universidades)</option>
+      </select>
+      <div class="invalid-feedback">El tipo de aspirante es requerido</div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary w-100 mt-2" [disabled]="preRegForm.submitted && preRegForm.invalid">Finalizar Pre-inscripción</button>
+  </form>
+  
+  <div class="mt-4 text-center">
+    <p class="text-muted mb-1">¿Ya realizó este paso?</p>
+    <a routerLink="/login" class="btn btn-outline-secondary btn-sm">Iniciar Sesion</a>
+  </div>
+</div>

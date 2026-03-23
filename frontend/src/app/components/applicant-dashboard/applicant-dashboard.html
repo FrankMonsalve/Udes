@@ -1,0 +1,168 @@
+<div class="card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+    <h3>Proceso de Inscripción de Aspirante</h3>
+    <div>
+      <span class="text-muted me-2 small">Estado actual:</span>
+      <span class="badge bg-info text-dark">{{aspirante.estado}}</span>
+    </div>
+  </div>
+
+  <!-- Navegación por pestanas (Tabs) -->
+  <ul class="nav nav-pills nav-fill mb-4 bg-light p-1 rounded">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="pestanaActiva === 1" (click)="pestanaActiva = 1">
+        <i class="bi bi-person-fill me-1"></i> 1. Datos Complementarios
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="pestanaActiva === 2" (click)="pestanaActiva = 2">
+        <i class="bi bi-file-earmark-arrow-up-fill me-1"></i> 2. Documentos
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="pestanaActiva === 3" (click)="pestanaActiva = 3">
+        <i class="bi bi-megaphone-fill me-1"></i> 3. Encuesta Mercadeo
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="pestanaActiva === 4" (click)="pestanaActiva = 4">
+        <i class="bi bi-check-circle-fill me-1"></i> 4. Finalizar
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab 1: Datos Complementarios -->
+  @if (pestanaActiva === 1) {
+    <h5 class="mb-3">Información Personal Adicional</h5>
+    <form (ngSubmit)="guardarPerfil()">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" [(ngModel)]="aspirante.correo" name="correo" readonly>
+          <div class="form-text">Campo informativo (de pre-registro)</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Número de Celular</label>
+          <input type="text" class="form-control" [(ngModel)]="aspirante.celular" name="celular" readonly>
+          <div class="form-text">Campo informativo (de pre-registro)</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Fecha de Nacimiento</label>
+          <input type="date" class="form-control" [(ngModel)]="aspirante.fecha_nacimiento" name="fecha_nacimiento" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Lugar de Nacimiento</label>
+          <input type="text" class="form-control" [(ngModel)]="aspirante.lugar_nacimiento" name="lugar_nacimiento" placeholder="Ciudad, Departamento" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Dirección de Residencia</label>
+        <input type="text" class="form-control" [(ngModel)]="aspirante.direccion_residencia" name="direccion_residencia" placeholder="Dirección completa" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Estrato Socioeconómico</label>
+        <select class="form-select" [(ngModel)]="aspirante.estrato" name="estrato" required>
+          <option [ngValue]="undefined" disabled>Seleccione...</option>
+          @for (e of [1,2,3,4,5,6]; track e) {
+            <option [value]="e">Estrato {{e}}</option>
+          }
+        </select>
+      </div>
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary">Guardar y Continuar <i class="bi bi-arrow-right ms-1"></i></button>
+      </div>
+    </form>
+  }
+
+  <!-- Tab 2: Carga de Documentos -->
+  @if (pestanaActiva === 2) {
+    <h5 class="mb-3">Carga de Soportes (PDF/JPG)</h5>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i> Los archivos deben estar en formato PDF o JPG según corresponda y no superar los 2MB.
+    </div>
+    
+    <div class="mb-3">
+      <label class="form-label">Foto Reciente (JPG)</label>
+      <input type="file" class="form-control" accept="image/jpeg">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Documento de Identidad (PDF)</label>
+      <input type="file" class="form-control" accept="application/pdf">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Diploma de Bachiller (PDF)</label>
+      <input type="file" class="form-control" accept="application/pdf">
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-secondary" (click)="pestanaActiva = 1">Anterior</button>
+      <button class="btn btn-primary" (click)="siguientePestana()">Siguiente <i class="bi bi-arrow-right ms-1"></i></button>
+    </div>
+  }
+
+  <!-- Tab 3: Encuesta de Mercadeo -->
+  @if (pestanaActiva === 3) {
+    <h5 class="mb-3">Encuesta de Ingreso</h5>
+    <form (ngSubmit)="guardarEncuesta()">
+      <div class="mb-3">
+        <label class="form-label">1. ¿Cuál es su motivación para estudiar en la Universidad?</label>
+        <textarea class="form-control" [(ngModel)]="aspirante.motivacion" name="motivacion" rows="3" placeholder="Cuéntenos sus razones..." required></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">2. ¿Por qué medio se enteró de la Institución?</label>
+        <select class="form-select" [(ngModel)]="aspirante.medio_enterado" name="medio_enterado" required>
+          <option value="Visita al colegio">Visita al colegio o la Institución</option>
+          <option value="Recomendación">Recomendación</option>
+          <option value="Funcionario institución">Funcionario institución</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">3. ¿Por cuál canal informativo se enteró de la institución?</label>
+        <select class="form-select" [(ngModel)]="aspirante.canal_informativo" name="canal_informativo" required>
+          <option value="Internet">Internet</option>
+          <option value="Radio">Radio</option>
+          <option value="Redes sociales">Redes sociales</option>
+          <option value="Televisión">Televisión</option>
+        </select>
+      </div>
+      
+      <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-outline-secondary" (click)="pestanaActiva = 2">Anterior</button>
+        <button type="submit" class="btn btn-primary">Guardar Encuesta y Continuar <i class="bi bi-arrow-right ms-1"></i></button>
+      </div>
+    </form>
+  }
+
+  <!-- Tab 4: Confirmación Final -->
+  @if (pestanaActiva === 4) {
+    <h5 class="mb-3 text-success">Finalizar Inscripción</h5>
+    <div class="card bg-light p-4 mb-4 text-center">
+      <div class="mb-3">
+        <h6>Programa Seleccionado:</h6>
+        <p class="lead text-primary"><strong>{{aspirante.programa_nombre}}</strong></p>
+      </div>
+      <p class="mb-3">Una vez confirmada la inscripción, su información será revisada por el área de Registro y Control.</p>
+      <p><strong>Asegúrese de haber completado todos los pasos anteriores.</strong></p>
+      
+      <button class="btn btn-success btn-lg px-5 mt-2" 
+        (click)="finalizarInscripcion()" 
+        [disabled]="aspirante.estado === 'FINALIZO INSCRIPCION' || aspirante.estado === 'APROBADO'">
+        <i class="bi bi-send-check me-2"></i> Confirmar Inscripción
+      </button>
+    </div>
+
+    @if (aspirante.estado === 'FINALIZO INSCRIPCION') { 
+      <div class="alert alert-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+        <div>
+          <strong>¡Proceso completado!</strong> Su inscripción ha sido confirmada y se encuentra en revisión. 
+          Pronto recibirá una notificación en su correo electrónico.
+        </div>
+      </div>
+    }
+    
+    <div class="text-start mt-4">
+      <button class="btn btn-outline-secondary" (click)="pestanaActiva = 3">Anterior</button>
+    </div>
+  }
+</div>

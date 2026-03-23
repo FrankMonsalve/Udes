@@ -1,0 +1,23 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Database
+instance/
+*.db
+*.sqlite3
+
+# Uploads
+backend/uploads/
+
+# IDEs
+.vscode/
+.idea/
